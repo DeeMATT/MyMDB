@@ -16,9 +16,11 @@ class Movie(models.Model):
     plot = models.TextField()
     year = models.PositiveIntegerField()
     rating = models.IntegerField(choices=RATINGS, default=NOT_RATED)
-    runtime = models.PostiveIntegerField()
+    runtime = models.PositiveIntegerField()
     website = models.URLField(blank=True)
 
-    def __str__(self):
-        return '{} ({})'.format(self.title, self.year)
+    class Meta:
+        ordering = ('-year', 'title')
 
+    def __str__(self):
+        return f'{self.title} ({self.year})'
