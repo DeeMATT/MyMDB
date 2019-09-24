@@ -1,6 +1,28 @@
 from django.db import models
 
+class MovieManager(models.Manager):
+
+    def all_with_related_persons(self):
+        qs = self.get_queryset()
+        qs = qs.select_related(
+            'director')
+        qs = qs.prefetch_related(
+            'writers', 'actors')
+        return qs
+
+
+class PersonManager(models.Manager):
+
+    def all_with_prefetch_movies(self):
+        qs = self.get_queryset()
+        return qs.prefetch_related(
+            'directed',
+            'writing_credits',
+            'role_set__movie')
+
+
 class Movie(models.Model):
+
     NOT_RATED = 0
     RATED_G = 1
     RATED_PG = 2
@@ -43,6 +65,7 @@ class Movie(models.Model):
 
 
 class Person(models.Model):
+    
     first_name = models.CharField(
         max_length=140)
     last_name = models.CharField(
@@ -81,24 +104,4 @@ class Role(models.Model):
         unique_together = ('movie',
                             'person',
                             'name')
-
-
-class PersonManager(models.Manager):
-    def all_with_prefetch_movies(self):
-        qs = self.get_queryset()
-        return qs.prefetch_related(
-            'directed',
-            'writing_credits',
-            'role_set__movie)
-
-
-class MovieManager(models.Manager):
-
-    def all_with_related_persons(self):
-        qs = self.get_queryset()
-        qs = qs.select_related(
-            'director')
-        qs = qs.prefetch_related(
-            'writers', 'actors')
-        return qs
 
