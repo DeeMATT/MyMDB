@@ -30,7 +30,8 @@ ALLOWED_HOSTS = [
     '127.0.0.1'
 ]
 
-LOGIN_REDIRECT_URL = 'core:MovieList'
+LOGIN_REDIRECT_URL = 'user:login'
+
 
 
 # Application definition
