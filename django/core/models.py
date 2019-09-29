@@ -3,6 +3,18 @@ from django.conf import settings
 from django.db.models.aggregates import Sum
 from emoji import emojize
 
+from uuid import uuid4
+
+def movie_directory_path_with_uuid(instance, filename):
+    return '{}{}'.format(instance.movie_id, uuid4())
+
+class MovieImage(models.Model):
+    image = models.ImageField(upload_to=movie_directory_path_with_uuid)
+    uploaded = models.DateTimeField(auto_now_add=True)
+    movie = models.ForeignKey('Movie', on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    
+
 class MovieManager(models.Manager):
 
     def all_with_related_persons(self):
@@ -11,11 +23,6 @@ class MovieManager(models.Manager):
             'director')
         qs = qs.prefetch_related(
             'writers', 'actors')
-        return qs
-
-    def all_with_related_persons_and_score(self):
-        qs = self.all_with_related_persons()
-        qs = qs.annotate(score=Sum('vote__value'))
         return qs
 
     def all_with_related_persons_and_score(self):
@@ -156,7 +163,7 @@ class Vote(models.Model):
         auto_now=True
     )
 
-     objects = VoteManager()
+    objects = VoteManager()
 
-     class Meta:
-         unique_together = ('user', 'movie')
+    class Meta:
+        unique_together = ('user', 'movie')

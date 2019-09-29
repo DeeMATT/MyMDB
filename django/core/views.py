@@ -2,10 +2,10 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, redirect
 from django.urls import reverse
-from django.views.generic import ListView, DetailView, CreateView, UpdateView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DetailView
 
-from core.forms import VoteForm
-from core.models import Movie, Person
+from core.forms import VoteForm, MovieImageForm
+from core.models import Movie, Person, Vote
 
 
 class MovieDetail(DetailView):
@@ -40,6 +40,11 @@ class MovieDetail(DetailView):
             ctx['vote_form'] = vote_form
             ctx['vote_form_url'] = vote_form_url
         return ctx
+    
+    def movie_image_form(self):
+        if self.request.user.is_authenticated:
+            return MovieImageForm()
+        return None
 
 class MovieList(ListView):
     model = Movie
